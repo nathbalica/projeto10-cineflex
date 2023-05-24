@@ -1,30 +1,72 @@
 import styled from "styled-components"
+import { Link, useParams } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function SeatsPage() {
+    const { idSessao } = useParams();
+
+    const [seatsMovie, setSeatsMovie] = useState(undefined)
+    const [selectedSeats, setSelectedSeats] = useState([])
+
+    useEffect(() => {
+        axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`)
+            .then(response => {
+                setSeatsMovie(response.data)
+                console.log(response.data.seats)
+            })
+            .catch(err => {
+                console.log(err.response.data);
+            });
+    }, [])
+
+    if (seatsMovie === undefined) {
+        return <div>Carregando...</div>
+    }
+
+    const handleSeatClick = (seatId) => {
+        const updatedSeats = seatsMovie.seats.map((seat) => {
+            if (seat.id === seatId) {
+                if (!seat.isAvailable) {
+                    return { ...seat, isSelected: !seat.isSelected };
+                } else {
+                    alert("Esse assento não está disponível");
+                }
+            }
+            return seat;
+        });
+
+        setSeatsMovie({ ...seatsMovie, seats: updatedSeats });
+    };
 
     return (
         <PageContainer>
             Selecione o(s) assento(s)
 
             <SeatsContainer>
-                <SeatItem>01</SeatItem>
-                <SeatItem>02</SeatItem>
-                <SeatItem>03</SeatItem>
-                <SeatItem>04</SeatItem>
-                <SeatItem>05</SeatItem>
+                {seatsMovie.seats.map((seat) => (
+                    <SeatItem
+                        key={seat.id}
+                        onClick={() => handleSeatClick(seat.id)}
+                        selected={seat.isSelected}
+                        available={seat.isAvailable}
+                    >
+                        {seat.name}
+                    </SeatItem>
+                ))}
             </SeatsContainer>
 
             <CaptionContainer>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle status={"selected"} />
                     Selecionado
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle status={"available"} />
                     Disponível
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle status={"unavailable"} />
                     Indisponível
                 </CaptionItem>
             </CaptionContainer>
@@ -95,9 +137,7 @@ const CaptionContainer = styled.div`
     justify-content: space-between;
     margin: 20px;
 `
-const CaptionCircle = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+const CaptionCircle = styled.div` 
     height: 25px;
     width: 25px;
     border-radius: 25px;
@@ -105,16 +145,36 @@ const CaptionCircle = styled.div`
     align-items: center;
     justify-content: center;
     margin: 5px 3px;
+
+    border: 1px solid ${({ status }) => {
+        if (status === "selected") return "#0E7D71";
+        if (status === "unavailable") return "#F7C52B";
+        return "#808F9D";
+    }};
+  background-color: ${({ status }) => {
+        if (status === "selected") return "#1AAE9E";
+        if (status === "unavailable") return "#FBE192";
+        return "#C3CFD9";
+    }};
 `
 const CaptionItem = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     font-size: 12px;
+
 `
 const SeatItem = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+   border: 1px solid ${({ selected, available }) => {
+        if (selected) return "#0E7D71";
+        if (available) return "#F7C52B";
+        return "#808F9D";
+    }};         // Essa cor deve mudar
+    background-color: ${({ selected, available }) => {
+        if (selected) return "#1AAE9E";
+        if (available) return "#FBE192";
+        return "#C3CFD9";
+    }};   // Essa cor deve mudar
     height: 25px;
     width: 25px;
     border-radius: 25px;
