@@ -2,18 +2,21 @@ import styled from "styled-components"
 import { Link, useParams } from 'react-router-dom';
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Caption from "../../components/Caption";
+import Footer from "../../components/Footer";
+import Seat from "../../components/Seat";
 
 export default function SeatsPage() {
     const { idSessao } = useParams();
 
     const [seatsMovie, setSeatsMovie] = useState(undefined)
-    const [selectedSeats, setSelectedSeats] = useState([])
+    const [selectedSeats, setSelectedSeats] = useState([]);
 
     useEffect(() => {
         axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`)
             .then(response => {
                 setSeatsMovie(response.data)
-                console.log(response.data.seats)
+                console.log(response.data)
             })
             .catch(err => {
                 console.log(err.response.data);
@@ -25,19 +28,22 @@ export default function SeatsPage() {
     }
 
     const handleSeatClick = (seatId) => {
-        const updatedSeats = seatsMovie.seats.map((seat) => {
-            if (seat.id === seatId) {
-                if (!seat.isAvailable) {
-                    return { ...seat, isSelected: !seat.isSelected };
-                } else {
-                    alert("Esse assento não está disponível");
-                }
-            }
-            return seat;
-        });
+        const seat = seatsMovie.seats.find((seat) => seat.id === seatId);
 
-        setSeatsMovie({ ...seatsMovie, seats: updatedSeats });
-    };
+        if (!seat.isAvailable) {
+          alert("Esse assento não está disponível");
+          return; // Não faz nada se o assento não estiver disponível
+        }
+      
+        const isSelected = selectedSeats.includes(seatId);
+    
+        if (isSelected) {
+          const updatedSeats = selectedSeats.filter(id => id !== seatId);
+          setSelectedSeats(updatedSeats);
+        } else {
+          setSelectedSeats([...selectedSeats, seatId]);
+        }
+      };
 
     return (
         <PageContainer>
@@ -45,31 +51,23 @@ export default function SeatsPage() {
 
             <SeatsContainer>
                 {seatsMovie.seats.map((seat) => (
-                    <SeatItem
+                    <Seat 
                         key={seat.id}
-                        onClick={() => handleSeatClick(seat.id)}
-                        selected={seat.isSelected}
-                        available={seat.isAvailable}
-                    >
-                        {seat.name}
-                    </SeatItem>
+                        handleSeat={() => handleSeatClick(seat.id)}
+                        seat={seat}
+                        isSelected={selectedSeats.includes(seat.id)}
+                    />
+                    // <SeatItem
+                    //     key={seat.id}
+                    //     onClick={() => handleSeatClick(seat.id)}
+                    //     isSelected={selectedSeats.includes(seat.id)}
+                    // >
+                    //     {seat.name}
+                    // </SeatItem>
                 ))}
             </SeatsContainer>
 
-            <CaptionContainer>
-                <CaptionItem>
-                    <CaptionCircle status={"selected"} />
-                    Selecionado
-                </CaptionItem>
-                <CaptionItem>
-                    <CaptionCircle status={"available"} />
-                    Disponível
-                </CaptionItem>
-                <CaptionItem>
-                    <CaptionCircle status={"unavailable"} />
-                    Indisponível
-                </CaptionItem>
-            </CaptionContainer>
+            <Caption />
 
             <FormContainer>
                 Nome do Comprador:
@@ -80,17 +78,13 @@ export default function SeatsPage() {
 
                 <button>Reservar Assento(s)</button>
             </FormContainer>
-
-            <FooterContainer>
-                <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
-                </div>
-                <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
-                    <p>Sexta - 14h00</p>
-                </div>
-            </FooterContainer>
-
+            
+            <Footer 
+                posterURL={seatsMovie.movie.posterURL}
+                title={seatsMovie.movie.title}
+                weekday={seatsMovie.day.weekday}
+                hour={seatsMovie.name}
+            />
         </PageContainer>
     )
 }
@@ -128,98 +122,5 @@ const FormContainer = styled.div`
     }
     input {
         width: calc(100vw - 60px);
-    }
-`
-const CaptionContainer = styled.div`
-    display: flex;
-    flex-direction: row;
-    width: 300px;
-    justify-content: space-between;
-    margin: 20px;
-`
-const CaptionCircle = styled.div` 
-    height: 25px;
-    width: 25px;
-    border-radius: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 5px 3px;
-
-    border: 1px solid ${({ status }) => {
-        if (status === "selected") return "#0E7D71";
-        if (status === "unavailable") return "#F7C52B";
-        return "#808F9D";
-    }};
-  background-color: ${({ status }) => {
-        if (status === "selected") return "#1AAE9E";
-        if (status === "unavailable") return "#FBE192";
-        return "#C3CFD9";
-    }};
-`
-const CaptionItem = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 12px;
-
-`
-const SeatItem = styled.div`
-   border: 1px solid ${({ selected, available }) => {
-        if (selected) return "#0E7D71";
-        if (available) return "#F7C52B";
-        return "#808F9D";
-    }};         // Essa cor deve mudar
-    background-color: ${({ selected, available }) => {
-        if (selected) return "#1AAE9E";
-        if (available) return "#FBE192";
-        return "#C3CFD9";
-    }};   // Essa cor deve mudar
-    height: 25px;
-    width: 25px;
-    border-radius: 25px;
-    font-family: 'Roboto';
-    font-size: 11px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 5px 3px;
-`
-const FooterContainer = styled.div`
-    width: 100%;
-    height: 120px;
-    background-color: #C3CFD9;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    font-size: 20px;
-    position: fixed;
-    bottom: 0;
-
-    div:nth-child(1) {
-        box-shadow: 0px 2px 4px 2px #0000001A;
-        border-radius: 3px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: white;
-        margin: 12px;
-        img {
-            width: 50px;
-            height: 70px;
-            padding: 8px;
-        }
-    }
-
-    div:nth-child(2) {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        p {
-            text-align: left;
-            &:nth-child(2) {
-                margin-top: 10px;
-            }
-        }
     }
 `
