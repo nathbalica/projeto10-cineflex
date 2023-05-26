@@ -7,8 +7,8 @@ import {formatCPF} from "../utils/formatCPF"
 
 export default function FormUser({ session, selectedSeats, setSuccessData }) {
 
-    const [cpf, setCpf] = useState({cpf: ""});
-    const [nome, setNome] = useState({name: ""})
+    const [cpf, setCpf] = useState({cpf: ''});
+    const [nome, setNome] = useState({name: ''})
     const [disable, setDisable] = useState(true)
     const [cpfInvalid, setCpfInvalid] = useState(false);
     const navigate = useNavigate()
@@ -40,13 +40,14 @@ export default function FormUser({ session, selectedSeats, setSuccessData }) {
         if (!validateCPF()) {
             return;
         }
-
+        const idsSeats = selectedSeats.map((seat) => seat.id)
         const requestData = {
-            ids: selectedSeats.map((seat) => seat.id),
+            ids: idsSeats,
             nome: nome.name,
-            cpf: cpf.cpf.replace(/\D/g, ""),
+            cpf: cpf.cpf.replace(/\D/g, '')
         };
 
+        console.log(requestData)
         const requisicao = axios.post("https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many", requestData)
         requisicao.then(res => {
             const data = {
