@@ -21,6 +21,7 @@ export default function Seat({ seat, handleSeat, isSelected }) {
             key={id}
             onClick={handleSeat}
             status={status}
+            data-test="seat"
         >
             {name}
         </SeatItem>

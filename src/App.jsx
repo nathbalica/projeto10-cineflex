@@ -33,7 +33,7 @@ export default function App() {
 
                 {!isHomePage && (
                     <ButtonBack>
-                        <button onClick={handleBack}>
+                        <button data-test="go-home-header-btn" onClick={handleBack}>
                             <ion-icon name="arrow-back-outline"></ion-icon>
                         </button>
                     </ButtonBack>

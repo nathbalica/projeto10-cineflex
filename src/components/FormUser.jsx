@@ -69,6 +69,7 @@ export default function FormUser({ session, selectedSeats, setSuccessData }) {
             <form onSubmit={bookSeat}>
                 Nome do Comprador:
                 <input
+                    data-test="client-name"
                     type="text"
                     required
                     placeholder="Digite seu nome..."
@@ -78,6 +79,7 @@ export default function FormUser({ session, selectedSeats, setSuccessData }) {
 
                 CPF do Comprador:
                 <input
+                    data-test="client-cpf" 
                     type="text"
                     required
                     placeholder="Digite seu CPF..."
@@ -85,7 +87,7 @@ export default function FormUser({ session, selectedSeats, setSuccessData }) {
                     onChange={(event) => setCpf(formatCPF(event.target.value))}
                 />
                 {cpfInvalid && <ErrorMessage>CPF inválido</ErrorMessage>}
-                <button disabled={disable}>Reservar Assento(s)</button>
+                <button type="submit" disabled={disable} data-test="book-seat-btn">Reservar Assento(s)</button>
             </form>
 
         </FormContainer>
@@ -99,6 +101,7 @@ const FormContainer = styled.div`
     font-size: 18px;
     button {
         align-self: center;
+        margin-top: 10px;
     }
     input {
         width: calc(100vw - 60px);

@@ -15,24 +15,24 @@ export default function SuccessPage({success, setSuccessData}) {
         <PageContainer>
             <h1>Pedido feito <br /> com sucesso!</h1>
 
-            <TextContainer>
+            <TextContainer  data-test="movie-info">
                 <strong><p>Filme e sessão</p></strong>
                 <p>{movie}</p>
                 <p>{date} - {hour}</p>
             </TextContainer>
 
-            <TextContainer>
+            <TextContainer  data-test="seats-info" >
                 <strong><p>Ingressos</p></strong>
                 {seats.map((seat, index) => <p key={index}>Assento {seat}</p>)}
             </TextContainer>
 
-            <TextContainer>
+            <TextContainer  data-test="client-info">
                 <strong><p>Comprador</p></strong>
                 <p>Nome: {client}</p>
                 <p>CPF: {formattedCPF}</p>
             </TextContainer>
 
-            <Link to='/' onClick={() => setSuccessData([])}>
+            <Link data-test="go-home-btn" to='/' onClick={() => setSuccessData([])}>
                 <button>
                     Voltar para Home
                 </button>

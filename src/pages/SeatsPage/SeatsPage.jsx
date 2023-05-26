@@ -68,18 +68,6 @@ export default function SeatsPage({setSuccessData}) {
                 session={seatsMovie}
             />
 
-            {/* <FormContainer>
-                <form>
-                Nome do Comprador:
-                <input type="text" required placeholder="Digite seu nome..." />
-
-                CPF do Comprador:
-                <input type="text" required placeholder="Digite seu CPF..." />
-                <button>Reservar Assento(s)</button>
-                </form>
-
-            </FormContainer> */}
-            
             <Footer 
                 posterURL={seatsMovie.movie.posterURL}
                 title={seatsMovie.movie.title}
