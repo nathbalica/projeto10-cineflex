@@ -43,7 +43,7 @@ export default function FormUser({ session, selectedSeats, setSuccessData }) {
         const idsSeats = selectedSeats.map((seat) => seat.id)
         const requestData = {
             ids: idsSeats,
-            nome: nome.name,
+            name: nome.name,
             cpf: cpf.cpf.replace(/\D/g, '')
         };
 
