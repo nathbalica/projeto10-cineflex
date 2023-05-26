@@ -7,15 +7,15 @@ import {formatCPF} from "../utils/formatCPF"
 
 export default function FormUser({ session, selectedSeats, setSuccessData }) {
 
-    const [cpf, setCpf] = useState("");
-    const [nome, setNome] = useState("")
+    const [cpf, setCpf] = useState({cpf: ""});
+    const [nome, setNome] = useState({name: ""})
     const [disable, setDisable] = useState(true)
     const [cpfInvalid, setCpfInvalid] = useState(false);
     const navigate = useNavigate()
 
     
     useEffect(() => {
-        if (nome && cpf && selectedSeats.length > 0) {
+        if (nome.name && cpf.cpf && selectedSeats.length > 0) {
             setDisable(false)
         } else {
             setDisable(true)
@@ -23,7 +23,7 @@ export default function FormUser({ session, selectedSeats, setSuccessData }) {
     }, [nome, cpf, selectedSeats])
 
     const validateCPF = () => {
-        const cpfDigits = cpf.replace(/\D/g, "");
+        const cpfDigits = cpf.cpf.replace(/\D/g, "");
     
         if (!validator(cpfDigits)) {
           setCpfInvalid(true); 
@@ -43,8 +43,8 @@ export default function FormUser({ session, selectedSeats, setSuccessData }) {
 
         const requestData = {
             ids: selectedSeats.map((seat) => seat.id),
-            nome: nome,
-            cpf: cpf.replace(/\D/g, ""),
+            nome: nome.name,
+            cpf: cpf.cpf.replace(/\D/g, ""),
         };
 
         const requisicao = axios.post("https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many", requestData)
@@ -53,8 +53,8 @@ export default function FormUser({ session, selectedSeats, setSuccessData }) {
                 movie: session.movie.title,
                 date: session.day.date,
                 hour: session.name,
-                client: nome,
-                cpf: cpf.replace(/\D/g, ""),
+                client: nome.name,
+                cpf: cpf.cpf.replace(/\D/g, ""),
                 seats: selectedSeats.map((item) => item.name)
             }
 
@@ -73,8 +73,8 @@ export default function FormUser({ session, selectedSeats, setSuccessData }) {
                     type="text"
                     required
                     placeholder="Digite seu nome..."
-                    value={nome}
-                    onChange={(event) => setNome(event.target.value)}
+                    value={nome.name}
+                    onChange={(event) => setNome({ name: event.target.value })}
                 />
 
                 CPF do Comprador:
@@ -83,8 +83,8 @@ export default function FormUser({ session, selectedSeats, setSuccessData }) {
                     type="text"
                     required
                     placeholder="Digite seu CPF..."
-                    value={cpf}
-                    onChange={(event) => setCpf(formatCPF(event.target.value))}
+                    value={cpf.cpf}
+                    onChange={(event) => setCpf({ cpf: formatCPF(event.target.value) })}
                 />
                 {cpfInvalid && <ErrorMessage>CPF inválido</ErrorMessage>}
                 <button type="submit" disabled={disable} data-test="book-seat-btn">Reservar Assento(s)</button>
