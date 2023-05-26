@@ -13,7 +13,6 @@ Esse projeto foi desenvolvido com as seguintes tecnologias:
 - [vite](https://vitejs.dev/)
 
 
-
 ## 🎨 Layout 
 
 O aplicativo segue o layout fornecido no Figma. Foi aplicada a estilização conforme as especificações do layout, utilizando as fontes indicadas.
@@ -21,27 +20,27 @@ O aplicativo segue o layout fornecido no Figma. Foi aplicada a estilização con
 - [Figma](https://www.figma.com/file/xt4dsKrSryDMuTaSaEBuwV/Cineflex?type=design&node-id=0-1&t=0khHo9d6YtsX9PCX-0) 
 
 
-## Componentização e dados 🔀
+## Escolha de Filme 🔀
 
-Os elementos da página foram componentizados com React em arquivos separados. Os dados dinâmicos da página, como o deck e flashcards, foram representados como arrays ou objetos no JavaScript e renderizados na tela.
+- Busca as informações dos filmes pela API fornecida e exibe conforme layout fornecido.
+- - Ao clicar em um filme, o usuário -e redirecionado para a rota /sessoes/:idFilme, sendo `:idFilme` o id do filme clicado.
 
-## Flashcards 🗂️
-- Existem 8 flashcards no aplicativo.
-- Todos os flashcards aparecem na tela virados e indexados por números (ex: Pergunta 1, Pergunta 2), ocultando a pergunta ou termo que eles contêm.
-- Ao clicar na seta de "play" de um flashcard, a pergunta ou termo correspondente ao flashcard é revelado.
-- Para ver a resposta do flashcard, o usuário deve clicar no ícone de "virar".
-- Ao virar um flashcard, o usuário visualiza a resposta correta para a pergunta e três botões: "Não lembrei", "Quase não lembrei" e "Zap!".
-- Ao clicar em qualquer um dos botões, o flashcard é marcado como respondido e seu status é alterado para refletir a escolha do usuário.
-- Depois de respondida, a pergunta fica fechada, com o texto tachado na cor correspondente ao seu status e um ícone indicativo.
-- A pergunta não pode ser aberta novamente.
+## Escolha de Sessão
 
+- A partir do id da URL, obtem-se da API as sessões disponíveis para o filme e exibe conforme o *layout* fornecido.
+- Ao clicar em uma sessão, o usuário é redirecionado para a rota `/assentos/:idSessao`, onde `:idSessao` é o id da sessão escolhida.
 
+## Escolha de Assento
 
-## Contador de conclusão 
+- Ao clicar em um assento disponível, o assento é marcado como "Selecionado".
+- Ao clicar novamente em um assento selecionado, ele volta para "Disponível".
+- Ao clicar em um assento indisponível, ele exibe um alerta de "Esse assento não está disponível".
+- O usuário pode selecionar vários assentos.
+- Ao clicar em "Reservar assento(s)", o pedido é enviado para o servidor e o usuário é redirecionado para a rota `/sucesso`.  Isso fará com os assentos marcados fiquem indisponíveis para outras marcações.
+ 
+## Sucesso
 
-- O contador mostra quantas perguntas o usuário já respondeu e quantas perguntas há no total.
-- Sempre que uma carta for respondida, o número de flashcards respondidos é atualizado.
-- O número de flashcards respondidos nunca pode ser maior do que o número total.
+- Ao clicar em "Voltar para Home" o usuário volta para a rota inicial (`/`), com o pedido zerado.
 
 ## Executando o projeto
 Para executar o projeto localmente, siga as etapas abaixo:
