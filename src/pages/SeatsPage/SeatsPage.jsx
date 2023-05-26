@@ -5,8 +5,9 @@ import axios from "axios";
 import Caption from "../../components/Caption";
 import Footer from "../../components/Footer";
 import Seat from "../../components/Seat";
+import FormUser from "../../components/FormUser";
 
-export default function SeatsPage() {
+export default function SeatsPage({setSuccessData}) {
     const { idSessao } = useParams();
 
     const [seatsMovie, setSeatsMovie] = useState(undefined)
@@ -16,34 +17,33 @@ export default function SeatsPage() {
         axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`)
             .then(response => {
                 setSeatsMovie(response.data)
-                console.log(response.data)
             })
             .catch(err => {
                 console.log(err.response.data);
             });
     }, [])
 
+
     if (seatsMovie === undefined) {
         return <div>Carregando...</div>
     }
 
-    const handleSeatClick = (seatId) => {
-        const seat = seatsMovie.seats.find((seat) => seat.id === seatId);
-
-        if (!seat.isAvailable) {
+    const handleSeatClick = (seatParam) => {
+        if (!seatParam.isAvailable) {
           alert("Esse assento não está disponível");
-          return; // Não faz nada se o assento não estiver disponível
+          return; 
         }
       
-        const isSelected = selectedSeats.includes(seatId);
-    
+        const isSelected = selectedSeats.some((s) => s.id === seatParam.id);
+      
         if (isSelected) {
-          const updatedSeats = selectedSeats.filter(id => id !== seatId);
+          const updatedSeats = selectedSeats.filter((s) => s.id !== seatParam.id);
           setSelectedSeats(updatedSeats);
         } else {
-          setSelectedSeats([...selectedSeats, seatId]);
+          setSelectedSeats([...selectedSeats, seatParam]);
         }
       };
+      console.log(selectedSeats)
 
     return (
         <PageContainer>
@@ -52,32 +52,33 @@ export default function SeatsPage() {
             <SeatsContainer>
                 {seatsMovie.seats.map((seat) => (
                     <Seat 
-                        key={seat.id}
-                        handleSeat={() => handleSeatClick(seat.id)}
-                        seat={seat}
-                        isSelected={selectedSeats.includes(seat.id)}
+                    key={seat.id}
+                    handleSeat={() => handleSeatClick(seat)}
+                    seat={seat}
+                    isSelected={selectedSeats.some((s) => s.id === seat.id)}
                     />
-                    // <SeatItem
-                    //     key={seat.id}
-                    //     onClick={() => handleSeatClick(seat.id)}
-                    //     isSelected={selectedSeats.includes(seat.id)}
-                    // >
-                    //     {seat.name}
-                    // </SeatItem>
-                ))}
+                    ))}
             </SeatsContainer>
 
             <Caption />
+            
+            <FormUser 
+                setSuccessData={setSuccessData}
+                selectedSeats={selectedSeats}
+                session={seatsMovie}
+            />
 
-            <FormContainer>
+            {/* <FormContainer>
+                <form>
                 Nome do Comprador:
-                <input placeholder="Digite seu nome..." />
+                <input type="text" required placeholder="Digite seu nome..." />
 
                 CPF do Comprador:
-                <input placeholder="Digite seu CPF..." />
-
+                <input type="text" required placeholder="Digite seu CPF..." />
                 <button>Reservar Assento(s)</button>
-            </FormContainer>
+                </form>
+
+            </FormContainer> */}
             
             <Footer 
                 posterURL={seatsMovie.movie.posterURL}
@@ -112,9 +113,6 @@ const SeatsContainer = styled.div`
 `
 const FormContainer = styled.div`
     width: calc(100vw - 40px); 
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
     margin: 20px 0;
     font-size: 18px;
     button {
@@ -122,5 +120,11 @@ const FormContainer = styled.div`
     }
     input {
         width: calc(100vw - 60px);
+    }
+    form{
+        align-items: flex-start;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
     }
 `

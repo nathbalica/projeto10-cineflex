@@ -24,7 +24,6 @@ export default function SessionsPage() {
     if (sessions === undefined) {
         return <div>Carregando...</div>
     }
-    console.log(sessions)
 
     return (
         <PageContainer>
@@ -32,6 +31,7 @@ export default function SessionsPage() {
             <div>
                 {sessions.days.map((session) => (
                     <Session 
+                        key={session.id}
                         weekday={session.weekday}
                         date={session.date}
                         showtimes={session.showtimes}

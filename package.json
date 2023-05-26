@@ -10,7 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@sideway/address": "^5.0.0",
+    "@sideway/formula": "^3.0.1",
     "axios": "^1.4.0",
+    "cpf-cnpj-validator": "^1.0.3",
+    "joi": "^17.9.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.11.2",
